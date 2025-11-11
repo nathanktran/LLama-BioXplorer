@@ -1,0 +1,22 @@
+name: Mesh-2022-pubMed
+
+train:
+  texts: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022-pubMed/train_texts.npy
+  labels: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022-pubMed/train_labels.npy
+
+valid:
+  size: 1297127
+
+test:
+  texts: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022-pubMed/test_texts.npy
+
+embedding:
+  emb_init: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022-pubMed/emb_init.npy
+
+output:
+  res: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022-pubMed/results
+
+labels_binarizer: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022-pubMed/labels_binarizer
+
+model:
+  emb_size: 300

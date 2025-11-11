@@ -1,0 +1,22 @@
+name: Mesh-2022
+
+train:
+  texts: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022/train_texts.npy
+  labels: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022/train_labels.npy
+
+valid:
+  size: 800
+
+test:
+  texts: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022/test_texts.npy
+
+embedding:
+  emb_init: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022/emb_init.npy
+
+output:
+  res: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022/results
+
+labels_binarizer: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022/labels_binarizer
+
+model:
+  emb_size: 300

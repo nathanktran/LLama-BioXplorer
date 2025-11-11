@@ -1,0 +1,22 @@
+name: AmazonCat-13K
+
+train:
+  texts: /p/realai/sneha/cornet2/CorNet/data/AmazonCat-13K/train_texts.npy
+  labels: /p/realai/sneha/cornet2/CorNet/data/AmazonCat-13K/train_labels.npy
+
+valid:
+  size: 4000
+
+test:
+  texts: /p/realai/sneha/cornet2/CorNet/data/AmazonCat-13K/test_texts.npy
+
+embedding:
+  emb_init: /p/realai/sneha/cornet2/CorNet/data/AmazonCat-13K/emb_init.npy
+
+output:
+  res: /p/realai/sneha/cornet2/CorNet/data/AmazonCat-13K/results
+
+labels_binarizer: //p/realai/sneha/cornet2/CorNet/data/AmazonCat-13K/labels_binarizer
+
+model:
+  emb_size: 300

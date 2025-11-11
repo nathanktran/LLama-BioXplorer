@@ -1,0 +1,17 @@
+embedding:
+  emb_init: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022-100K-12Terms-1/emb_init.npy
+input:
+  texts: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022-100K-12Terms-1/input2_20251030_185559.npy
+labels_binarizer: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022-100K-12Terms-1/labels_binarizer
+model:
+  emb_size: 300
+name: Mesh-2022-100K-12Terms-1
+output:
+  res: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022-100K-12Terms-1/results
+test:
+  texts: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022-100K-12Terms-1/test_texts.npy
+train:
+  labels: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022-100K-12Terms-1/train_labels.npy
+  texts: /p/realai/BioXplorer/CorNet_Model/data/Mesh-2022-100K-12Terms-1/train_texts.npy
+valid:
+  size: 8000

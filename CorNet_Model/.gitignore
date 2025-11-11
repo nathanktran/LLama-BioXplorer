@@ -1,0 +1,82 @@
+# Python caches and artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pycache/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Byte-compiled / caches
+.python-version
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints
+
+# Logs
+logs/
+*.log
+
+# Model/data/binary artifacts - DO NOT CHECK IN
+data/
+data/**
+
+# Large files
+*.npy
+*.npz
+*.h5
+*.pt
+*.pth
+*.bin
+*.tar.gz
+*.zip
+*.gz
+
+# Embeddings / glove
+glove*
+*.vectors.npy
+
+# Model checkpoints and outputs
+outputs/
+checkpoints/
+models/
+models/**
+
+# Editor files
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Keep small config YAMLs tracked (explicitly listed if needed)
+# e.g. configure/datasets/*.yaml are small and useful to track# Ignore log files
+*.log
+*.txt
+
+# Ignore node_modules folder
+data/EUR-Lex-2
+data/allMeSH_2022.zip
+data/AmazonCat-13K
+data/EUR-Lex
+data/glove
+data/glove.zip 
+data/Mesh-2022
+data/Mesh-2022-100K
+data/Mesh-2022-100K
+data/allMeSH_2022.json
+data/glove.840B.300d.gensim
+data/glove.840B.300d.gensim
+data/glove.840B.300d.gensim.vectors.npy
+
+
+# Ignore dist folder
+# dist/
+
+# Ignore environment variable files
+# .env

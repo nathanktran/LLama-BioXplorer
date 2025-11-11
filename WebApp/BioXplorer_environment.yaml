@@ -1,0 +1,16 @@
+name: BioXplorer
+channels:
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1=main
+  - _openmp_mutex=5.1=1_gnu
+  - ca-certificates=2024.7.2=h06a4308_0
+  - icu=73.1=h6a678d5_0
+  - libgcc-ng=11.2.0=h1234567_1
+  - libgomp=11.2.0=h1234567_1
+  - libstdcxx-ng=11.2.0=h1234567_1
+  - libuv=1.44.2=h5eee18b_0
+  - nodejs=18.18.2=h2d74bed_0
+  - openssl=3.0.14=h5eee18b_0
+  - zlib=1.2.13=h5eee18b_1
+prefix: /u/gjf3sa/miniconda3/envs/BioXplorer
