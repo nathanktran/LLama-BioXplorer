@@ -1,0 +1,90 @@
+[
+  {
+    "pmid": "34793526",
+    "title": "Modelling digital and manual contact tracing for COVID-19. Are low uptakes and missed contacts deal-breakers?",
+    "abstract": "Comprehensive testing schemes, followed by adequate contact tracing and isolation, represent the best public health interventions we can employ to reduce the impact of an ongoing epidemic when no or limited vaccine supplies are available and the implications of a full lockdown are to be avoided. However, the process of tracing can prove feckless for highly-contagious viruses such as SARS-CoV-2. The interview-based approaches often miss contacts and involve significant delays, while digital solutions can suffer from insufficient adoption rates or inadequate usage patterns. Here we present a novel way of modelling different contact tracing strategies, using a generalized multi-site mean-field model, which can naturally assess the impact of manual and digital approaches alike. Our methodology can readily be applied to any compartmental formulation, thus enabling the study of more complex pathogen dynamics. We use this technique to simulate a newly-defined epidemiological model, SEIR-T, and show that, given the right conditions, tracing in a COVID-19 epidemic can be effective even when digital uptakes are sub-optimal or interviewers miss a fair proportion of the contacts.",
+    "ground_truth": [
+      "COVID-19",
+      "Contact Tracing",
+      "Disease Outbreaks",
+      "Humans",
+      "Models, Statistical"
+    ],
+    "predicted": [
+      "COVID-19",
+      "Contact Tracing",
+      "Digital Technology",
+      "Epidemiologic Models",
+      "Humans",
+      "Public Health",
+      "SARS-CoV-2"
+    ],
+    "raw_response": "[\n  \"COVID-19\",\n  \"Contact Tracing\",\n  \"Digital Technology\",\n  \"Epidemiologic Models\",\n  \"Humans\",\n  \"Public Health\",\n  \"SARS-CoV-2\"\n]"
+  },
+  {
+    "pmid": "34773048",
+    "title": "Interferon mediated prophylactic protection against respiratory viruses conferred by a prototype live attenuated influenza virus vaccine lacking non-structural protein 1.",
+    "abstract": "The influenza A non-structural protein 1 (NS1) is known for its ability to hinder the synthesis of type I interferon (IFN) during viral infection. Influenza viruses lacking NS1 (ÄNS1) are under clinical development as live attenuated human influenza virus vaccines and induce potent influenza virus-specific humoral and cellular adaptive immune responses. Attenuation of ÄNS1 influenza viruses is due to their high IFN inducing properties, that limit their replication in vivo. This study demonstrates that pre-treatment with a ÄNS1 virus results in an antiviral state which prevents subsequent replication of homologous and heterologous viruses, preventing disease from virus respiratory pathogens, including SARS-CoV-2. Our studies suggest that ÄNS1 influenza viruses could be used for the prophylaxis of influenza, SARS-CoV-2 and other human respiratory viral infections, and that an influenza virus vaccine based on ÄNS1 live attenuated viruses would confer broad protection against influenza virus infection from the moment of administration, first by non-specific innate immune induction, followed by specific adaptive immunity.",
+    "ground_truth": [
+      "Adaptive Immunity",
+      "Animals",
+      "COVID-19",
+      "Chickens",
+      "Gene Deletion",
+      "Humans",
+      "Influenza A virus",
+      "Influenza Vaccines",
+      "Influenza, Human",
+      "Interferon Type I",
+      "Mice",
+      "Mice, Inbred C57BL",
+      "Orthomyxoviridae Infections",
+      "Vaccines, Attenuated",
+      "Viral Nonstructural Proteins"
+    ],
+    "predicted": [
+      "Adaptive Immunity",
+      "Animals",
+      "Antiviral Agents",
+      "COVID-19",
+      "Humans",
+      "Influenza A Virus, H1N1 Subtype",
+      "Interferons",
+      "Live Vaccines",
+      "Nonstructural Proteins",
+      "Respiratory Tract Infections",
+      "SARS-CoV-2",
+      "Type I Interferon"
+    ],
+    "raw_response": "[\n  \"Adaptive Immunity\",\n  \"Animals\",\n  \"Antiviral Agents\",\n  \"COVID-19\",\n  \"Humans\",\n  \"Influenza A Virus, H1N1 Subtype\",\n  \"Interferons\",\n  \"Live Vaccines\",\n  \"Nonstructural Proteins\",\n  \"Respiratory Tract Infections\",\n  \"SARS-CoV-2\",\n  \"Type I Interferon\"\n]"
+  },
+  {
+    "pmid": "34763873",
+    "title": "Identification of bHLH genes through genome-wide association study and antisense expression of ZjbHLH076/ZjICE1 influence tolerance to low temperature and salinity in Zoysia japonica.",
+    "abstract": "Abiotic stress greatly affects plant growth and developmental processes, resulting in poor productivity. A variety of basic helix-loop-helix (bHLH) transcription factors (TFs) that play important roles in plant abiotic stress response pathways have been identified. However, bHLH proteins of Zoysia japonica, one of the warm-season turfgrasses, have not been widely studied. In this study, 141 bHLH genes (ZjbHLHs) were identified and classified into 22 subfamilies. The ZjbHLHs were mapped on 19 chromosomes except for Chr17 and one pair of the tandemly arrayed genes was identified on Chr06. Also, the co-linearity of ZjbHLHs was found to have been driven mostly by segmental duplication events. The subfamily IIIb genes of our present interest, possessed various stress responsive cis-elements in their promoters. ZjbHLH076/ZjICE1, a MYC-type bHLH TF in subfamily IIIb was analyzed by overexpression and its loss-of-function via overexpressing a short ZjbHLH076/ZjICE1 fragment in the antisense direction. The overexpression of ZjbHLH076/ZjICE1 enhanced the tolerance to cold and salinity stress in the transgenic Z. japonica plants. However, the anti-sense expression of ZjbHLH076/ZjICE1 showed sensitive to these abiotic stresses. These results suggest that ZjbHLH076/ZjICE1 would be a promising candidate for the molecular breeding program to improve the abiotic stress tolerance of Z. japonica.",
+    "ground_truth": [
+      "Cold Temperature",
+      "Gene Expression Regulation, Plant",
+      "Genes, Plant",
+      "Genome-Wide Association Study",
+      "Poaceae",
+      "Salt Stress",
+      "Salt Tolerance",
+      "Stress, Physiological"
+    ],
+    "predicted": [
+      "Abiotic Stress",
+      "Basic Helix-Loop-Helix Transcription Factors",
+      "Cold Temperature",
+      "Gene Expression Regulation",
+      "Genome-Wide Association Study",
+      "Plant Development",
+      "Plant Growth",
+      "Plants",
+      "Salinity",
+      "Transgenic Plants",
+      "Zoysia japonica"
+    ],
+    "raw_response": "[\n  \"Abiotic Stress\",\n  \"Basic Helix-Loop-Helix Transcription Factors\",\n  \"Cold Temperature\",\n  \"Gene Expression Regulation\",\n  \"Genome-Wide Association Study\",\n  \"Plant Development\",\n  \"Plant Growth\",\n  \"Plants\",\n  \"Salinity\",\n  \"Transgenic Plants\",\n  \"Zoysia japonica\"\n]"
+  }
+]
