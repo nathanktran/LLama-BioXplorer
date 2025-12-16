@@ -1,0 +1,18 @@
+# Fine-tuning requirements for MeSH extraction
+# Install with: pip install -r requirements_finetuning.txt
+
+# Core dependencies (already in main requirements.txt)
+torch>=2.0.0
+transformers>=4.36.0
+
+# Fine-tuning specific
+peft>=0.7.0
+trl>=0.7.0
+bitsandbytes>=0.41.0
+accelerate>=0.25.0
+datasets>=2.16.0
+scipy>=1.11.0
+
+# Optional but recommended
+wandb  # For experiment tracking
+tensorboard  # For training visualization
