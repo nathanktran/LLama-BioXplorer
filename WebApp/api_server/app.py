@@ -84,8 +84,9 @@ class AbstractRequest(BaseModel):
 
 @app.on_event("startup")
 def load_models():
-    global tokenizer, model, generator, ner_pipeline
+    global tokenizer, model, generator, ner_pipeline, llama_model, llama_tokenizer
     from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+    from peft import PeftModel
     import torch
 
     model_id = os.environ.get("HF_BIOGPT_MODEL", "microsoft/biogpt")
@@ -117,6 +118,42 @@ def load_models():
     except Exception:
         # Fallback to default transformers behavior
         ner_pipeline = pipeline("ner", model=ner_model, aggregation_strategy="simple", device=0 if use_cuda else -1)
+    
+    # Load fine-tuned LLaMA model for MeSH extraction (4-bit quantization)
+    llama_model = None
+    llama_tokenizer = None
+    try:
+        from transformers import BitsAndBytesConfig
+        
+        base_model = "meta-llama/Llama-3.1-8B-Instruct"
+        adapter_path = "/bigtemp/ddz2sb/BioXplorer-BioGPT/mesh_extraction/mesh_finetuned_20251212_020629"
+        
+        logger.info(f"Loading LLaMA base model with 4-bit quantization: {base_model}")
+        llama_tokenizer = AutoTokenizer.from_pretrained(base_model)
+        
+        # 4-bit quantization config
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.float16,
+            bnb_4bit_use_double_quant=True,
+        )
+        
+        llama_base = AutoModelForCausalLM.from_pretrained(
+            base_model,
+            quantization_config=bnb_config,
+            device_map="auto",
+            max_memory={i: "10GiB" for i in range(torch.cuda.device_count())},
+        )
+        
+        logger.info(f"Loading fine-tuned adapter: {adapter_path}")
+        llama_model = PeftModel.from_pretrained(llama_base, adapter_path)
+        # Note: Don't merge when using 4-bit, keep adapter separate for efficiency
+        
+        logger.info("LLaMA fine-tuned model loaded successfully (4-bit quantized)")
+    except Exception as e:
+        logger.warning(f"Could not load LLaMA model: {e}")
+        logger.warning("MeSH extraction endpoint will not be available")
 
 @app.get("/")
 def read_root():
@@ -297,4 +334,120 @@ def extract_abstract_endpoint(req: AbstractRequest):
         return {"abstract": abstract, "length": len(abstract)}
     except Exception as e:
         logger.exception("Abstract extraction error")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class MeshExtractionRequest(BaseModel):
+    text: str
+    title: Optional[str] = ""
+    extract_abstract_only: Optional[bool] = True
+
+
+@app.post("/mesh_extract")
+def mesh_extract_endpoint(req: MeshExtractionRequest):
+    """Extract MeSH terms using fine-tuned LLaMA model."""
+    import json
+    import torch
+    
+    if llama_model is None or llama_tokenizer is None:
+        raise HTTPException(status_code=503, detail="LLaMA model not loaded")
+    
+    if not req.text:
+        raise HTTPException(status_code=400, detail="Missing text")
+    
+    try:
+        # Extract abstract if requested
+        text_to_process = req.text
+        if req.extract_abstract_only:
+            text_to_process = extract_abstract(req.text)
+        
+        # Create instruction prompt
+        instruction = """Extract ALL MeSH (Medical Subject Headings) terms from this biomedical abstract.
+
+IMPORTANT:
+- Include ALL relevant entities: diseases, chemicals, organisms, procedures, demographics
+- ALWAYS include: Humans, Animals, specific species when mentioned
+- Include age groups (Adult, Child, Aged, Middle Aged) and gender when relevant
+- Return as JSON array only
+
+"""
+        
+        if req.title:
+            input_text = f"Title: {req.title}\n\nAbstract: {text_to_process}"
+        else:
+            input_text = f"Abstract: {text_to_process}"
+        
+        messages = [
+            {"role": "system", "content": instruction},
+            {"role": "user", "content": input_text}
+        ]
+        
+        # Tokenize
+        prompt = llama_tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True
+        )
+        
+        inputs = llama_tokenizer(prompt, return_tensors="pt", truncation=True, max_length=2048)
+        device = next(llama_model.parameters()).device
+        inputs = {k: v.to(device) for k, v in inputs.items()}
+        
+        # Generate
+        with torch.no_grad():
+            outputs = llama_model.generate(
+                **inputs,
+                max_new_tokens=768,
+                temperature=0.3,
+                top_p=0.9,
+                do_sample=True,
+                repetition_penalty=1.1,
+                pad_token_id=llama_tokenizer.eos_token_id
+            )
+        
+        # Decode only new tokens
+        input_length = inputs['input_ids'].shape[1]
+        generated_tokens = outputs[0][input_length:]
+        response = llama_tokenizer.decode(generated_tokens, skip_special_tokens=True)
+        
+        # Parse response to extract MeSH terms
+        mesh_terms = []
+        try:
+            # Try to find JSON array in response
+            start_idx = response.find('[')
+            end_idx = response.rfind(']')
+            
+            if start_idx != -1 and end_idx != -1:
+                json_str = response[start_idx:end_idx+1]
+                json_str = json_str.replace('\n', ' ').replace('\r', '')
+                mesh_terms = json.loads(json_str)
+                if isinstance(mesh_terms, list):
+                    mesh_terms = [str(term).strip() for term in mesh_terms if term]
+        except:
+            # Fallback: try regex extraction
+            import re
+            if '[' in response and ']' in response:
+                content = response[response.find('['):response.rfind(']')+1]
+                mesh_terms = re.findall(r'["\']([^"\',\[\]]+)["\']', content)
+                mesh_terms = [term.strip() for term in mesh_terms if term.strip()]
+        
+        # Format as entities for consistency with NER endpoint
+        entities = [
+            {
+                'text': term,
+                'label': 'MeSH',
+                'category': 'MeSH',
+                'score': 1.0
+            }
+            for term in mesh_terms
+        ]
+        
+        return {
+            'entities': entities,
+            'mesh_terms': mesh_terms,
+            'raw_response': response
+        }
+        
+    except Exception as e:
+        logger.exception("MeSH extraction error")
         raise HTTPException(status_code=500, detail=str(e))

@@ -4,19 +4,19 @@ import ScrollableBox from './ScrollableBox';
 const BioGPTComponent = () => {
     const [inputText, setInputText] = useState('');
     const [processedText, setProcessedText] = useState('');
-    const [entities, setEntities] = useState([]);
     const [entitiesByCategory, setEntitiesByCategory] = useState({});
     const [loading, setLoading] = useState(false);
     const [selectedEntity, setSelectedEntity] = useState(null);
     const [bioGPTResponse, setBioGPTResponse] = useState('');
     const [abstractOnly, setAbstractOnly] = useState(true);
+    const [meshTerms, setMeshTerms] = useState([]);
 
     const handleTextChange = (event) => {
         setInputText(event.target.value);
         setProcessedText('');
-        setEntities([]);
         setEntitiesByCategory({});
         setBioGPTResponse('');
+        setMeshTerms([]);
     };
 
     // Read file as text and put into input area (accepts .txt, .md)
@@ -68,7 +68,6 @@ const BioGPTComponent = () => {
             const j = await r.json();
             if (r.ok) {
                 const entityList = j.entities || [];
-                setEntities(entityList);
                 
                 // Group entities by category
                 const grouped = {};
@@ -82,6 +81,28 @@ const BioGPTComponent = () => {
                 setEntitiesByCategory(grouped);
             } else {
                 console.error('NER error', j);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleExtractMesh = async () => {
+        if (!inputText) return;
+        setLoading(true);
+        try {
+            const r = await fetch('http://localhost:5001/mesh_extract', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: inputText, extract_abstract_only: abstractOnly }),
+            });
+            const j = await r.json();
+            if (r.ok) {
+                setMeshTerms(j.mesh_terms || []);
+            } else {
+                console.error('MeSH extraction error', j);
             }
         } catch (err) {
             console.error(err);
@@ -143,7 +164,7 @@ const BioGPTComponent = () => {
                     fontSize: '28px',
                     fontWeight: '600',
                     letterSpacing: '-0.5px'
-                }}>BioGPT Analysis with Entity Recognition</h1>
+                }}>Biomedical Text Analysis (BioGPT + NER + LLaMA)</h1>
                 
                 <label style={{ 
                     display: 'flex', 
@@ -230,7 +251,6 @@ const BioGPTComponent = () => {
                                         setInputText(j.text || '');
                                         setProcessedText(j.summary || '');
                                         const entityList = j.entities || [];
-                                        setEntities(entityList);
                                         // Group by category
                                         const grouped = {};
                                         entityList.forEach(entity => {
@@ -276,14 +296,64 @@ const BioGPTComponent = () => {
                         onBlur={(e) => e.target.style.borderColor = '#ced4da'}
                     />
                     
-                    <div style={{ display: 'flex', gap: '12px', marginTop: 'auto' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: 'auto' }}>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                            <button 
+                                onClick={handleProcess} 
+                                disabled={!inputText || loading}
+                                style={{
+                                    flex: 1,
+                                    padding: '12px 20px',
+                                    backgroundColor: inputText && !loading ? '#28a745' : '#e9ecef',
+                                    color: inputText && !loading ? 'white' : '#6c757d',
+                                    border: 'none',
+                                    borderRadius: '2px',
+                                    fontWeight: '600',
+                                    fontSize: '14px',
+                                    cursor: inputText && !loading ? 'pointer' : 'not-allowed',
+                                    transition: 'background-color 0.2s'
+                                }}
+                                onMouseEnter={(e) => {
+                                    if (inputText && !loading) e.target.style.backgroundColor = '#218838';
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (inputText && !loading) e.target.style.backgroundColor = '#28a745';
+                                }}
+                            >
+                                Analyze Text
+                            </button>
+                            <button 
+                                onClick={handleExtractKeywords} 
+                                disabled={!inputText || loading}
+                                style={{
+                                    flex: 1,
+                                    padding: '12px 20px',
+                                    backgroundColor: inputText && !loading ? '#fd7e14' : '#e9ecef',
+                                    color: inputText && !loading ? 'white' : '#6c757d',
+                                    border: 'none',
+                                    borderRadius: '2px',
+                                    fontWeight: '600',
+                                    fontSize: '14px',
+                                    cursor: inputText && !loading ? 'pointer' : 'not-allowed',
+                                    transition: 'background-color 0.2s'
+                                }}
+                                onMouseEnter={(e) => {
+                                    if (inputText && !loading) e.target.style.backgroundColor = '#e8590c';
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (inputText && !loading) e.target.style.backgroundColor = '#fd7e14';
+                                }}
+                            >
+                                Extract Entities
+                            </button>
+                        </div>
                         <button 
-                            onClick={handleProcess} 
+                            onClick={handleExtractMesh} 
                             disabled={!inputText || loading}
                             style={{
-                                flex: 1,
+                                width: '100%',
                                 padding: '12px 20px',
-                                backgroundColor: inputText && !loading ? '#28a745' : '#e9ecef',
+                                backgroundColor: inputText && !loading ? '#667eea' : '#e9ecef',
                                 color: inputText && !loading ? 'white' : '#6c757d',
                                 border: 'none',
                                 borderRadius: '2px',
@@ -293,37 +363,13 @@ const BioGPTComponent = () => {
                                 transition: 'background-color 0.2s'
                             }}
                             onMouseEnter={(e) => {
-                                if (inputText && !loading) e.target.style.backgroundColor = '#218838';
+                                if (inputText && !loading) e.target.style.backgroundColor = '#5568d3';
                             }}
                             onMouseLeave={(e) => {
-                                if (inputText && !loading) e.target.style.backgroundColor = '#28a745';
+                                if (inputText && !loading) e.target.style.backgroundColor = '#667eea';
                             }}
                         >
-                            Analyze Text
-                        </button>
-                        <button 
-                            onClick={handleExtractKeywords} 
-                            disabled={!inputText || loading}
-                            style={{
-                                flex: 1,
-                                padding: '12px 20px',
-                                backgroundColor: inputText && !loading ? '#fd7e14' : '#e9ecef',
-                                color: inputText && !loading ? 'white' : '#6c757d',
-                                border: 'none',
-                                borderRadius: '2px',
-                                fontWeight: '600',
-                                fontSize: '14px',
-                                cursor: inputText && !loading ? 'pointer' : 'not-allowed',
-                                transition: 'background-color 0.2s'
-                            }}
-                            onMouseEnter={(e) => {
-                                if (inputText && !loading) e.target.style.backgroundColor = '#e8590c';
-                            }}
-                            onMouseLeave={(e) => {
-                                if (inputText && !loading) e.target.style.backgroundColor = '#fd7e14';
-                            }}
-                        >
-                            Extract Entities
+                            Extract MeSH Terms (LLaMA)
                         </button>
                     </div>
                 </div>
@@ -402,6 +448,62 @@ const BioGPTComponent = () => {
                                 </div>
                             )}
 
+                            {meshTerms.length > 0 && (
+                                <div style={{ 
+                                    border: '1px solid #dee2e6', 
+                                    padding: '16px', 
+                                    borderRadius: '2px', 
+                                    marginBottom: '20px', 
+                                    backgroundColor: '#f8f9fa',
+                                    borderLeft: '4px solid #667eea'
+                                }}>
+                                    <h4 style={{ 
+                                        margin: '0 0 12px 0', 
+                                        fontSize: '16px', 
+                                        fontWeight: '600',
+                                        color: '#212529'
+                                    }}>MeSH Terms (Fine-tuned LLaMA 3.1-8B)</h4>
+                                    <div style={{ 
+                                        display: 'flex', 
+                                        flexWrap: 'wrap', 
+                                        gap: '8px',
+                                        marginTop: '12px'
+                                    }}>
+                                        {meshTerms.map((term, idx) => (
+                                            <div 
+                                                key={idx}
+                                                onClick={() => handleEntityClick(term)}
+                                                style={{ 
+                                                    backgroundColor: selectedEntity === term ? '#667eea' : '#ffffff', 
+                                                    color: selectedEntity === term ? 'white' : '#495057', 
+                                                    padding: '6px 14px', 
+                                                    borderRadius: '2px', 
+                                                    fontWeight: '500',
+                                                    fontSize: '13px',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.15s',
+                                                    border: selectedEntity === term ? '1px solid #667eea' : '1px solid #ced4da'
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    if (selectedEntity !== term) {
+                                                        e.target.style.backgroundColor = '#f8f9fa';
+                                                        e.target.style.borderColor = '#667eea';
+                                                    }
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    if (selectedEntity !== term) {
+                                                        e.target.style.backgroundColor = '#ffffff';
+                                                        e.target.style.borderColor = '#ced4da';
+                                                    }
+                                                }}
+                                            >
+                                                {term}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             {Object.keys(entitiesByCategory).length > 0 && (
                                 <div style={{ marginBottom: '20px' }}>
                                     <h4 style={{ 
@@ -409,7 +511,7 @@ const BioGPTComponent = () => {
                                         fontSize: '16px', 
                                         fontWeight: '600',
                                         color: '#212529'
-                                    }}>Extracted Entities by Category</h4>
+                                    }}>Extracted Entities by Category (Biomedical NER)</h4>
                                     {Object.entries(entitiesByCategory).map(([category, entityList]) => (
                                         <div key={category} style={{ marginBottom: '20px' }}>
                                             <div style={{
@@ -499,15 +601,20 @@ const BioGPTComponent = () => {
                                 </div>
                             )}
 
-                            {!processedText && Object.keys(entitiesByCategory).length === 0 && !bioGPTResponse && (
+                            {!processedText && Object.keys(entitiesByCategory).length === 0 && meshTerms.length === 0 && !bioGPTResponse && (
                                 <div style={{ 
                                     textAlign: 'center', 
                                     padding: '60px 20px',
                                     color: '#adb5bd'
                                 }}>
                                     <p style={{ fontSize: '14px', margin: 0, lineHeight: '1.6' }}>
-                                        Upload a scientific article or enter text, then click "Analyze Text" or "Extract Entities" to begin analysis.
+                                        Upload a scientific article or enter text, then click one of the buttons to begin analysis:
                                     </p>
+                                    <ul style={{ fontSize: '13px', textAlign: 'left', display: 'inline-block', marginTop: '12px', color: '#6c757d' }}>
+                                        <li><strong>Analyze Text:</strong> BioGPT text generation</li>
+                                        <li><strong>Extract Entities:</strong> Biomedical NER (diseases, chemicals, genes)</li>
+                                        <li><strong>Extract MeSH Terms:</strong> Fine-tuned LLaMA 3.1-8B for MeSH terminology</li>
+                                    </ul>
                                 </div>
                             )}
                         </>
