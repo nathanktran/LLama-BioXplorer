@@ -1,0 +1,10 @@
+fastapi>=0.95
+uvicorn[standard]
+transformers>=4.30
+torch
+accelerate
+sentencepiece
+tokenizers
+PyMuPDF
+sacremoses
+protobuf
